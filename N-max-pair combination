@@ -1,0 +1,76 @@
+Sort both the arrays in ascending order.
+Let us take priority queue (heap).
+First max element is going to be the sum of the last two elements of array A and B i.e. (A[n-1] + B[n-1]).
+Insert that in heap with indices of both array i.e (n-1, n-1).
+Start popping from heap (n-iterations).
+And insert the sum (A[L-1]+A[R]) and (A[L]+B[R-1]).
+Take care that repeating indices should not be there in the heap (use map for that).
+
+
+// #define pii  pair<int,int>
+#define ppii pair<int,pair<int,int>>
+#define f first
+#define s second
+vector<int> Solution::solve(vector<int> &A, vector<int> &B) {
+    sort(A.begin(), A.end());
+    sort(B.begin(), B.end());
+    vector<int> res;
+    int n = A.size(), m = B.size() , k = n;
+
+    priority_queue<ppii> pq;
+    set<ppii> st;
+    st.insert({A[n-1] + B[n-1] , {n-1,n-1}});
+    pq.push({A[n-1] + B[n-1] , {n-1,n-1}});
+    while(!pq.empty() && k-- > 0){
+        int val = pq.top().f, i = pq.top().s.f , j = pq.top().s.s;
+        
+        pq.pop();
+        res.push_back(val);
+
+        if(j >= 0 && st.find({A[i] + B[j-1], {i,j-1}}) == st.end()){
+            st.insert({A[i] + B[j-1], {i,j-1}});
+            pq.push({A[i] + B[j-1], {i,j-1}});
+        }
+        if(i >= 0 && st.find({A[i-1] + B[j], {i-1, j}}) == st.end()){
+            st.insert({A[i-1] + B[j], {i-1, j}});
+            pq.push({A[i-1] + B[j], {i-1, j}});
+        }
+    }
+    sort(res.begin(), res.end() , greater<int>());
+    return res;
+}
+
+
+
+2. for minimum sum. we know that start from i with 0 and now pop the least sum element 
+and now try to insert i , j + 1 if inside boundry.
+
+
+#define pii  pair<int,int>
+#define ppii pair<int,pair<int,int>>
+class Solution {
+public:
+    vector<vector<int>> kSmallestPairs(vector<int>& a, vector<int>& b, int k) {
+        int n = a.size(), m = b.size();
+       
+        vector<vector<int>> res;
+        if(n == 0 || m == 0) return res; 
+        
+        priority_queue<ppii, vector<ppii>, greater<ppii>> pq;
+        
+        for(int i = 0; i < n; i++){
+            pq.push({a[i] + b[0] , {i, 0}});
+        }
+        
+        while(!pq.empty() && k-- > 0){
+            int val = pq.top().first , i = pq.top().second.first, j = pq.top().second.second;
+            pq.pop();
+            res.push_back({a[i],b[j]});
+            
+            if(j + 1 == m)  continue;
+            pq.push({a[i] + b[j+1] , {i, j+1}});
+        }
+        return res;
+        
+    }
+};
