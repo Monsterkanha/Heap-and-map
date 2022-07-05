@@ -1,0 +1,25 @@
+Here, create a set that will contain all the numbers. 
+Now iterate on numbers. If that (number -1) is present then continue because this will surely gonna traverse by previous streak. 
+
+now if that previous number is not present so use this to traverse all the number.
+
+
+
+class Solution {
+public:
+    int longestConsecutive(vector<int>& nums) {
+        int n = nums.size();
+        unordered_set<int> st(nums.begin(), nums.end());
+        
+        int ans = 0;
+        
+        for(auto x: st){
+            if(st.count(x-1)) continue;
+            
+            int y = x + 1;
+            while(st.count(y)) y++;
+            ans = max(ans, y - x);
+        }
+        return ans;
+    }
+};
